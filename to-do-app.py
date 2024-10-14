@@ -1,7 +1,11 @@
 tasks=[]
 
 def addTask():
-    task = input("Enter a task: ")
+    task = [input("Enter a task: "),
+            input("Enter a date: "),
+            input("Enter a duration time in minutes: "),
+            input("Enter a category: "),
+            input("Enter additional notes: ")]
     tasks.append(task)
     print(f"'{task}' has been added to the list.")
 
@@ -30,7 +34,11 @@ def editTask():
     try:
         taskToEdit = int(input("Enter the # to edit: "))
         if taskToEdit >= 0 and taskToEdit < len(tasks):
-            tasks[taskToEdit]=input("Enter new value: ")
+            tasks[taskToEdit]=[ input("Enter new value for task or type 'no change': "),
+                                input("Enter new value for date: "),
+                                input("Enter new value for duration time in minutes: "),
+                                input("Enter new value for category: "),
+                                input("Enter new value for additional notes: ")]
             print(f"'{taskToEdit}' has been edited.")
         else:
             print(f"Task #{taskToEdit} has not been found.")
