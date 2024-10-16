@@ -1,4 +1,7 @@
+from sympy.integrals.meijerint_doc import category
+
 tasks=[]
+filtered=[]
 
 def addTask():
     task = [input("Enter a task: "),
@@ -14,8 +17,19 @@ def listTasks():
         print("Currently the list is empty.")
     else:
         print("Current tasks:")
-        for index, task in enumerate(tasks):
+        for (index, task) in enumerate(tasks):
             print(f"Task #{index}. {task}")
+
+def filterTasks():
+    category = (input("Enter a category you would like to filter by: "))
+    if category in tasks:
+        filtered = list(filter(lambda x: x[3] == category, tasks))
+        print(f"Currently in '{category}' category there are following tasks:")
+        for (index, task) in enumerate(filtered):
+            print(f"Task #{index}. {task}.")
+    else:
+        print(f"'{category}' category not found.")
+
 
 def deleteTask():
     listTasks ()
@@ -57,6 +71,7 @@ def main ():
         To edit existing object: insert E
         To delete existing object: insert D
         To get the current list of task: insert L
+        To filter tasks per category: insert F
         To exit the app: insert X
         """))
 
@@ -69,6 +84,8 @@ def main ():
                 deleteTask ()
             case "L":
                 listTasks ()
+            case "F":
+                filterTasks ()
             case "X":
                 print("Ok, thank you for using this App, see you next time!\n-------------")
                 not_stop_working = False
