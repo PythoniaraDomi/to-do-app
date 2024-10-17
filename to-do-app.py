@@ -1,5 +1,4 @@
-from sympy.integrals.meijerint_doc import category
-
+task=[]
 tasks=[]
 filtered=[]
 
@@ -20,15 +19,21 @@ def listTasks():
         for (index, task) in enumerate(tasks):
             print(f"Task #{index}. {task}")
 
-def filterTasks():
+def filterTasks(): #how to insert category
     category = (input("Enter a category you would like to filter by: "))
     if category in tasks:
         filtered = list(filter(lambda x: x[3] == category, tasks))
         print(f"Currently in '{category}' category there are following tasks:")
         for (index, task) in enumerate(filtered):
-            print(f"Task #{index}. {task}.")
+                print(f"Task #{index}. {task}.")
     else:
         print(f"'{category}' category not found.")
+
+def dateFormat(): #temporary function, on hold
+    from datetime import datetime
+    date_str = tasks[1][1]
+    date_object = datetime.strptime(date_str, '%d.%m.%Y').date()
+    print(date_object)
 
 
 def deleteTask():
@@ -72,8 +77,10 @@ def main ():
         To delete existing object: insert D
         To get the current list of task: insert L
         To filter tasks per category: insert F
+        To get dates: insert I
         To exit the app: insert X
         """))
+
 
         match action:
             case "A":
@@ -89,7 +96,12 @@ def main ():
             case "X":
                 print("Ok, thank you for using this App, see you next time!\n-------------")
                 not_stop_working = False
-        print("\n-------------")
+                print("\n-------------")
+            case "I": #temporary
+                dateFormat ()
+            case _:
+                print("Invalid input. Please try again.")
+
 
 
 if __name__ == "__main__":
