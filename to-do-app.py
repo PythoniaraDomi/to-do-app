@@ -15,19 +15,24 @@ def listTasks():
     if not tasks:
         print("Currently the list is empty.")
     else:
-        print("Current tasks:")
+        print("Current tasks:\n")
         for (index, task) in enumerate(tasks):
             print(f"Task #{index}. {task}")
 
 def filterTasks(): #how to insert category
-    category = (input("Enter a category you would like to filter by: "))
-    if category in tasks:
-        filtered = list(filter(lambda x: x[3] == category, tasks))
-        print(f"Currently in '{category}' category there are following tasks:")
+    category = [sublist[3] for sublist in tasks]
+    print(f"Currently on your list there are tasks in the following categories:")
+    for element in category:
+        print(f"{element}")
+    print("\n-------------")
+    applied_filter = input("What category do you want filter by?\n")
+    if applied_filter in category:
+        filtered = list(filter(lambda x: x[3] == applied_filter, tasks))
+        print(f"Currently in '{applied_filter}' category there are following tasks:")
         for (index, task) in enumerate(filtered):
-                print(f"Task #{index}. {task}.")
+            print(f"Task #{index}. {task}.")
     else:
-        print(f"'{category}' category not found.")
+        print(f"'{applied_filter}' category not found.")
 
 def dateFormat(): #temporary function, on hold
     from datetime import datetime
@@ -38,6 +43,7 @@ def dateFormat(): #temporary function, on hold
 
 def deleteTask():
     listTasks ()
+    print("\n-------------")
     try:
         taskToDelete = int(input("Enter the # to delete: "))
         if taskToDelete >= 0 and taskToDelete < len(tasks):
@@ -53,7 +59,7 @@ def editTask():
     try:
         taskToEdit = int(input("Enter the # to edit: "))
         if taskToEdit >= 0 and taskToEdit < len(tasks):
-            tasks[taskToEdit]=[ input("Enter new value for task or type 'no change': "),
+            tasks[taskToEdit]=[ input("Enter new value for task: "),
                                 input("Enter new value for date: "),
                                 input("Enter new value for duration time in minutes: "),
                                 input("Enter new value for category: "),
