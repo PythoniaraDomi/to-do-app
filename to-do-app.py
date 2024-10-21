@@ -19,7 +19,7 @@ def listTasks():
         for (index, task) in enumerate(tasks):
             print(f"Task #{index}. {task}")
 
-def filterTasks(): #how to insert category
+def filterCategory(): #how to insert category
     category = [sublist[3] for sublist in tasks]
     print(f"Currently on your list there are tasks in the following categories:")
     for element in category:
@@ -33,13 +33,6 @@ def filterTasks(): #how to insert category
             print(f"Task #{index}. {task}.")
     else:
         print(f"'{applied_filter}' category not found.")
-
-def dateFormat(): #temporary function, on hold
-    from datetime import datetime
-    date_str = tasks[1][1]
-    date_object = datetime.strptime(date_str, '%d.%m.%Y').date()
-    print(date_object)
-
 
 def deleteTask():
     listTasks ()
@@ -60,7 +53,7 @@ def editTask():
         taskToEdit = int(input("Enter the # to edit: "))
         if taskToEdit >= 0 and taskToEdit < len(tasks):
             tasks[taskToEdit]=[ input("Enter new value for task: "),
-                                input("Enter new value for date: "),
+                                input("Enter new value for date: [expected format: DD.MM.YYYY]"),
                                 input("Enter new value for duration time in minutes: "),
                                 input("Enter new value for category: "),
                                 input("Enter new value for additional notes: ")]
@@ -82,8 +75,8 @@ def main ():
         To edit existing object: insert E
         To delete existing object: insert D
         To get the current list of task: insert L
-        To filter tasks per category: insert F
-        To get dates: insert I
+        To filter tasks per category: insert FC
+        To filter tasks per date: insert FD
         To exit the app: insert X
         """))
 
@@ -97,14 +90,14 @@ def main ():
                 deleteTask ()
             case "L":
                 listTasks ()
-            case "F":
-                filterTasks ()
+            case "FC":
+                filterCategory ()
             case "X":
                 print("Ok, thank you for using this App, see you next time!\n-------------")
                 not_stop_working = False
                 print("\n-------------")
-            case "I": #temporary
-                dateFormat ()
+            case "FD":
+                filterDate ()
             case _:
                 print("Invalid input. Please try again.")
 
