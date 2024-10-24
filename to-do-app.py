@@ -2,37 +2,167 @@ task=[]
 tasks=[]
 filtered=[]
 
+todayTasks = []
+weekTasks = []
+monthTasks = []
+
+import datetime
+from datetime import datetime, timedelta
+
+current_date = datetime.now().date()
+week_from_now = current_date + timedelta(weeks=1)
+month_from_now = current_date + timedelta(days=30)
+
 def addTask():
+    print("\n-------------")
     task = [input("Enter a task: "),
-            input("Enter a date: "),
-            input("Enter a duration time in minutes: "),
-            input("Enter a category: "),
-            input("Enter additional notes: ")]
+            input("Enter a date [expected format: DD.MM.YYYY]: ")]
+
+    original_date = task[1]
+    task_date = datetime.strptime(original_date, '%d.%m.%Y').date()
+    if task_date < current_date:
+        print(f"Are you sure that you want to add task from the past to the list?")
+        confirmation = input("Type: Yes or No\n")
+        if confirmation != "Yes":
+            print(f"Thanks for the confirmation. The task hasn't been added to the list.")
+        else:
+            print(f"'Thanks for the confirmation. Please continue")
+    task.append(int(input("Enter a duration time in minutes: ")))
+    task.append(input("Enter a category: "))
+    task.append(input("Enter additional notes: "))
     tasks.append(task)
     print(f"'{task}' has been added to the list.")
 
 def listTasks():
+    print("\n-------------")
     if not tasks:
         print("Currently the list is empty.")
     else:
         print("Current tasks:\n")
         for (index, task) in enumerate(tasks):
-            print(f"Task #{index}. {task}")
+            print(f"Task #{index+1}. {task}")
 
-def filterCategory(): #how to insert category
-    category = [sublist[3] for sublist in tasks]
-    print(f"Currently on your list there are tasks in the following categories:")
-    for element in category:
-        print(f"{element}")
+def filterCategory():
     print("\n-------------")
+    category = [sublist[3] for sublist in tasks]
+    unique_categories = list(set(category))
+    print(f"Currently on your list there are tasks in the following categories:")
+    for (index, element) in enumerate(unique_categories):
+        print(f"#{index+1}.{element}")
+    print("-------------\n")
+
     applied_filter = input("What category do you want filter by?\n")
     if applied_filter in category:
         filtered = list(filter(lambda x: x[3] == applied_filter, tasks))
         print(f"Currently in '{applied_filter}' category there are following tasks:")
         for (index, task) in enumerate(filtered):
-            print(f"Task #{index}. {task}.")
+            print(f"Task #{index+1}. {task}.")
     else:
         print(f"'{applied_filter}' category not found.")
+
+
+def filterDate():
+    not_stop_working = True
+    while not_stop_working:
+        action = str(input("""
+        To filter pending tasks for today: insert T
+        To filter pending tasks for upcoming week: insert W
+        To filter pending tasks for upcoming month: insert M
+        To go back to main screen: insert Y
+        """))
+
+
+        match action:
+            case "T":
+                filterToday()
+            case "W":
+                filterWeek()
+            case "M":
+                filterMonth ()
+            case "Y":
+                main()
+            case _:
+                print("Invalid input. Please try again.")
+
+def filterToday():
+    for task in tasks:
+        original_date = task[1]
+        task_date = datetime.strptime(original_date, '%d.%m.%Y').date()
+
+        if current_date == task_date:
+            todayTasks.append(task)
+
+    if todayTasks:
+        print(f"Tasks for today are:")
+        for (index, task) in enumerate(todayTasks):
+                print(f"Task #{index+1}. {task}.")
+    else:
+        print(f"There are no tasks for today.")
+
+
+def filterWeek():
+    for task in tasks:
+        original_date = task[1]
+        task_date = datetime.strptime(original_date, '%d.%m.%Y').date()
+
+        if current_date <= task_date <= week_from_now:
+            weekTasks.append(task)
+
+    if weekTasks:
+        print(f"Tasks for the upcoming week are:")
+        for (index, task) in enumerate(weekTasks):
+                print(f"Task #{index+1}. {task}.")
+    else:
+        print(f"There are no tasks for the upcoming week.")
+
+
+def filterMonth():
+    for task in tasks:
+        original_date = task[1]
+        task_date = datetime.strptime(original_date, '%d.%m.%Y').date()
+
+        if current_date <= task_date <= month_from_now:
+            monthTasks.append(task)
+
+    if monthTasks:
+        print(f"Tasks for the upcoming month are:")
+        for (index, task) in enumerate(monthTasks):
+            print(f"Task #{index+1}. {task}.")
+    else:
+        print(f"There are no tasks for the upcoming month.")
+
+def timeDuration():
+    print("\n-------------")
+    category = [sublist[3] for sublist in tasks]
+    unique_categories = list(set(category))
+    print(f"Currently on your list there are tasks in the following categories:")
+    for (index, element) in enumerate(unique_categories):
+        print(f"#{index + 1}.{element}")
+    print("-------------\n")
+
+    applied_filter = input("What category do you want get duration summary for?\n")
+    if applied_filter in category:
+        filtered = list(filter(lambda x: x[3] == applied_filter, tasks))
+        for task in filtered:
+            original_date = task[1]
+            task_date = datetime.strptime(original_date, '%d.%m.%Y').date()
+            if current_date == task_date:
+                todayTasks.append(task)
+                tasks_duration_today = [sublist[2] for sublist in todayTasks]
+                duration_today = sum(tasks_duration_today)
+                print(f"Today there are {duration_today} minutes planned for '{applied_filter}' category.")
+            elif current_date <= task_date <= week_from_now:
+                weekTasks.append(task)
+                tasks_duration_week = [sublist[2] for sublist in weekTasks]
+                duration_week = sum(tasks_duration_week)
+                print(f"This week there are {duration_week} minutes planned for '{applied_filter}' category.")
+            elif current_date <= task_date <= month_from_now:
+                monthTasks.append(task)
+                tasks_duration_month = [sublist[2] for sublist in monthTasks]
+                duration_month = sum(tasks_duration_month)
+                print(f"This month there are {duration_month} minutes planned for '{applied_filter}' category.")
+    else:
+            print(f"'{applied_filter}' category not found.")
 
 def deleteTask():
     listTasks ()
@@ -51,7 +181,7 @@ def editTask():
     listTasks ()
     try:
         taskToEdit = int(input("Enter the # to edit: "))
-        if taskToEdit >= 0 and taskToEdit < len(tasks):
+        if taskToEdit >= 1 and taskToEdit < len(tasks):
             tasks[taskToEdit]=[ input("Enter new value for task: "),
                                 input("Enter new value for date: [expected format: DD.MM.YYYY]"),
                                 input("Enter new value for duration time in minutes: "),
@@ -77,6 +207,7 @@ def main ():
         To get the current list of task: insert L
         To filter tasks per category: insert FC
         To filter tasks per date: insert FD
+        To get time summary per category: insert T
         To exit the app: insert X
         """))
 
@@ -98,6 +229,8 @@ def main ():
                 print("\n-------------")
             case "FD":
                 filterDate ()
+            case "T":
+                timeDuration()
             case _:
                 print("Invalid input. Please try again.")
 
