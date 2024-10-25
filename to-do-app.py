@@ -132,6 +132,11 @@ def filterMonth():
         print(f"There are no tasks for the upcoming month.")
 
 def timeDuration():
+
+    todayTasks.clear()
+    weekTasks.clear()
+    monthTasks.clear()
+
     print("\n-------------")
     category = [sublist[3] for sublist in tasks]
     unique_categories = list(set(category))
@@ -143,26 +148,34 @@ def timeDuration():
     applied_filter = input("What category do you want get duration summary for?\n")
     if applied_filter in category:
         filtered = list(filter(lambda x: x[3] == applied_filter, tasks))
+
         for task in filtered:
             original_date = task[1]
             task_date = datetime.strptime(original_date, '%d.%m.%Y').date()
             if current_date == task_date:
                 todayTasks.append(task)
-                tasks_duration_today = [sublist[2] for sublist in todayTasks]
-                duration_today = sum(tasks_duration_today)
-                print(f"Today there are {duration_today} minutes planned for '{applied_filter}' category.")
-            elif current_date <= task_date <= week_from_now:
+            if current_date <= task_date <= week_from_now:
                 weekTasks.append(task)
-                tasks_duration_week = [sublist[2] for sublist in weekTasks]
-                duration_week = sum(tasks_duration_week)
-                print(f"This week there are {duration_week} minutes planned for '{applied_filter}' category.")
-            elif current_date <= task_date <= month_from_now:
+            if current_date <= task_date <= month_from_now:
                 monthTasks.append(task)
-                tasks_duration_month = [sublist[2] for sublist in monthTasks]
-                duration_month = sum(tasks_duration_month)
-                print(f"This month there are {duration_month} minutes planned for '{applied_filter}' category.")
+
+        duration_today = sum([sublist[2] for sublist in todayTasks])
+        duration_week = sum([sublist[2] for sublist in weekTasks])
+        duration_month = sum ([sublist[2] for sublist in monthTasks])
+
+        if todayTasks:
+            print(f"Today there are {duration_today} minutes planned for '{applied_filter}' category.")
+
+        if weekTasks:
+            print(f"This week there are {duration_week} minutes planned for '{applied_filter}' category.")
+
+        if monthTasks:
+            print(f"This month there are {duration_month} minutes planned for '{applied_filter}' category.")
+
     else:
-            print(f"'{applied_filter}' category not found.")
+        print(f"'{applied_filter}' category not found.")
+
+
 
 def deleteTask():
     listTasks ()
@@ -181,10 +194,10 @@ def editTask():
     listTasks ()
     try:
         taskToEdit = int(input("Enter the # to edit: "))
-        if taskToEdit >= 1 and taskToEdit < len(tasks):
-            tasks[taskToEdit]=[ input("Enter new value for task: "),
-                                input("Enter new value for date: [expected format: DD.MM.YYYY]"),
-                                input("Enter new value for duration time in minutes: "),
+        if taskToEdit >= 1 and taskToEdit < 1+len(tasks):
+            tasks[taskToEdit-1]=[ input("Enter new value for task: "),
+                                input("Enter new value for date [expected format: DD.MM.YYYY]: "),
+                                int(input("Enter new value for duration time in minutes: ")),
                                 input("Enter new value for category: "),
                                 input("Enter new value for additional notes: ")]
             print(f"'{taskToEdit}' has been edited.")
