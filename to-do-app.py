@@ -9,6 +9,8 @@ monthTasks = []
 import datetime
 from datetime import datetime, timedelta
 
+import pandas as pd
+
 current_date = datetime.now().date()
 week_from_now = current_date + timedelta(weeks=1)
 month_from_now = current_date + timedelta(days=30)
@@ -206,6 +208,11 @@ def editTask():
     except:
         print("Invalid input.")
 
+def exportList():
+    tasks_formatted = pd.DataFrame(tasks, columns=["task", "date", "duration (mins)", "category", "notes"])
+    tasks_formatted.to_csv("tasks_formatted.csv", index=False)
+    print("Tasks exported successfully. CSV file saved in the path for this library.")
+
 def main ():
     print("-------------\nHello in Your-To-Do-List App!\n-------------")
     print("What would you like to do? (write capital letter to perform specific action)\n-------------")
@@ -221,6 +228,7 @@ def main ():
         To filter tasks per category: insert FC
         To filter tasks per date: insert FD
         To get time summary per category: insert T
+        To export the current list into CSV file: insert EL
         To exit the app: insert X
         """))
 
@@ -244,6 +252,8 @@ def main ():
                 filterDate ()
             case "T":
                 timeDuration()
+            case "EL":
+                exportList()
             case _:
                 print("Invalid input. Please try again.")
 
