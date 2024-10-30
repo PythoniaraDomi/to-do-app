@@ -9,11 +9,30 @@ monthTasks = []
 import datetime
 from datetime import datetime, timedelta
 
+import random
+
 import pandas as pd
 
 current_date = datetime.now().date()
 week_from_now = current_date + timedelta(weeks=1)
 month_from_now = current_date + timedelta(days=30)
+
+def loadTasks():
+    try:
+        tasks_data = pd.read_csv(f"to_do_list_{current_date}.csv")
+        for index, row in tasks_data.iterrows():
+            task = [
+                row["task"],
+                row["date"],
+                int(row["duration (mins)"]),
+                row["category"],
+                row["notes"]
+            ]
+            tasks.append(task)
+        print("Previous tasks loaded successfully!\n")
+
+    except FileNotFoundError:
+        print("No previous tasks file found. Starting with an empty list.\n")
 
 def addTask():
     print("\n-------------")
@@ -208,15 +227,70 @@ def editTask():
     except:
         print("Invalid input.")
 
+def createDummyList():
+    tasks_name = ["SOP update", "1:1 meeting", "team meeting", "revenue analysis", "cost adjustments",
+                  "mandatory trainings", "improvement project", "manual payment"]
+
+    tasks_duration = {
+        "SOP update": [60, 240],
+        "1:1 meeting": [30, 60],
+        "team meeting": [30, 45],
+        "revenue analysis": [170, 320],
+        "cost adjustments": [15, 45],
+        "mandatory trainings": [20, 65],
+        "improvement project": [90, 160],
+        "manual payment": [15, 75]}
+
+    categories = ["high priority", "medium priority", "low priority"]
+
+    notes = ["boring", "fun one", "exciting", "repetitive"]
+
+    def random_date(start, end):
+        delta = end - start
+        random_days = random.randint(0, delta.days)
+        return (start + timedelta(days=random_days)).strftime("%d.%m.%Y")
+
+    start_date = datetime(2024, 10, 1)
+    end_date = datetime(2024, 12, 31)
+
+    def create_dummy_task():
+        dummy_name = random.choice(tasks_name)
+        dummy_date = random_date(start_date, end_date)
+        dummy_duration = int(random.randint(*tasks_duration[dummy_name]))
+        dummy_category = random.choice(categories)
+        dummy_note = random.choice(notes)
+        return dummy_name, dummy_date, dummy_duration, dummy_category, dummy_note
+
+    def create_dummy_tasks(tasks_number):
+        dummy_tasks_list = []
+        for _ in range(tasks_number):
+            dummy_tasks_list.append(create_dummy_task())
+        return dummy_tasks_list
+
+    def exportDummyTasks():
+        dummy_tasks_formatted = pd.DataFrame(dummy_tasks, columns=["task", "date", "duration (mins)", "category", "notes"])
+        dummy_tasks_formatted.to_csv(f"dummy_to_do_list_{current_date}.csv", index=False, header=True)
+        print(f"Tasks exported successfully. CSV file 'dummy_to_do_list_{current_date}' saved in the project path.")
+
+    tasks_number = int(input("Enter the # of tasks: "))
+    dummy_tasks = create_dummy_tasks(tasks_number)
+    exportDummyTasks()
+
+
+
 def exportList():
     tasks_formatted = pd.DataFrame(tasks, columns=["task", "date", "duration (mins)", "category", "notes"])
-    tasks_formatted.to_csv("tasks_formatted.csv", index=False)
-    print("Tasks exported successfully. CSV file saved in the path for this library.")
+    tasks_formatted.to_csv(f"to_do_list_{current_date}.csv", index=False)
+    print(f"Tasks exported successfully. CSV file 'to_do_list_{current_date}' saved in the project path.")
 
 def main ():
     print("-------------\nHello in Your-To-Do-List App!\n-------------")
-    print("What would you like to do? (write capital letter to perform specific action)\n-------------")
 
+    load_previous = input("Would you like to load your previous task list? (Yes/No):\n")
+    if load_previous == "Yes":
+        loadTasks()
+
+    print("What would you like to do? (write capital letter to perform specific action)\n-------------")
 
     not_stop_working = True
     while not_stop_working:
@@ -229,6 +303,7 @@ def main ():
         To filter tasks per date: insert FD
         To get time summary per category: insert T
         To export the current list into CSV file: insert EL
+        To create the dummy list: insert DL
         To exit the app: insert X
         """))
 
@@ -244,18 +319,21 @@ def main ():
                 listTasks ()
             case "FC":
                 filterCategory ()
-            case "X":
-                print("Ok, thank you for using this App, see you next time!\n-------------")
-                not_stop_working = False
-                print("\n-------------")
             case "FD":
                 filterDate ()
             case "T":
                 timeDuration()
             case "EL":
                 exportList()
+            case "DL":
+                createDummyList()
+            case "X":
+                print("Ok, thank you for using this App, see you next time!\n-------------")
+                not_stop_working = False
+                print("\n-------------")
             case _:
                 print("Invalid input. Please try again.")
+
 
 
 
